@@ -56,7 +56,7 @@
                 </Separator>
                 <StackPane fx:id="stackCreate" prefHeight="484.0" prefWidth="244.0" VBox.vgrow="ALWAYS">
                     <children>
-                        <VBox fx:id="createView" alignment="CENTER" visible="false" StackPane.alignment="CENTER">
+                        <VBox fx:id="createView" alignment="CENTER" StackPane.alignment="CENTER">
                             <children>
                                 <VBox fx:id="Create" prefHeight="484.0" prefWidth="231.0">
                                     <padding>
@@ -93,7 +93,7 @@
                                         </GridPane>
                                     </children>
                                 </VBox>
-                                <VBox prefHeight="744.0" prefWidth="231.0">
+                                <VBox prefHeight="744.0" prefWidth="231.0" VBox.vgrow="ALWAYS">
                                     <children>
                                         <Label alignment="CENTER_RIGHT" text="Values">
                                             <font>
@@ -242,7 +242,7 @@
                                 </HBox>
                             </children>
                         </VBox>
-                        <VBox fx:id="selectView" prefHeight="200.0" prefWidth="100.0">
+                        <VBox fx:id="selectView" prefHeight="200.0" prefWidth="100.0" visible="false">
                             <children>
                                 <VBox fx:id="selectVbox" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
                                     <children>
