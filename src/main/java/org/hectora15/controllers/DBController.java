@@ -5,6 +5,12 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import org.hectora15.ui.DBMain;
+import org.hectora15.util.JDBCInterpreter;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DBController {
 
@@ -49,6 +55,8 @@ public class DBController {
     private int currentViewIndex = 0;
     private VBox[] views;
     private String[] viewNames = {"CREATE", "INSERT", "SELECT", "DELETE"};
+    JDBCInterpreter interpreter;
+    Connection connect;
 
     // Controllers
     private CreateViewController createController;
@@ -60,6 +68,14 @@ public class DBController {
     public void initialize(){
         // all views in an array for easy navigation
         views = new VBox[]{createView, insertView, selectView, deleteView};
+
+        String url = getDatabase().getUrl();
+        String user = getDatabase().getUsername();
+        String password = getDatabase().getPassword();
+
+        interpreter = new JDBCInterpreter(url,user,password);
+        connect = interpreter.getConnect();
+
 
         // Controllers injection
         injectControllers();
@@ -92,12 +108,10 @@ public class DBController {
         }
     }
 
-
     private void showNextView() {
         currentViewIndex = (currentViewIndex + 1) % views.length;
         showView(currentViewIndex);
     }
-
 
     private void showPreviousView() {
         currentViewIndex = (currentViewIndex - 1 + views.length) % views.length;
@@ -114,4 +128,9 @@ public class DBController {
 
         System.out.println("Swapping to: " + viewNames[index]);
     }
+
+    private JDBCInterpreter getDatabase() {
+        return DBMain.jdbcInterpreter;
+    }
+
 }

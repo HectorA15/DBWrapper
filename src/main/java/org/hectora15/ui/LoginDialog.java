@@ -21,6 +21,10 @@ public class LoginDialog {
         }
     }
 
+
+
+
+    // =========================== METHODS ===========================
     public static Optional<Credentials> showLoginDialog() {
         Dialog<Credentials> dialog = new Dialog<>();
         dialog.setTitle("Connect to the BD");

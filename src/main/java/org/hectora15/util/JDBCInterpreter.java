@@ -1,6 +1,8 @@
 package org.hectora15.util;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class JDBCInterpreter {
 
@@ -29,7 +31,7 @@ public class JDBCInterpreter {
     public String getUrl() {return url;}
     public String getUsername() {return username;}
     public String getPassword() {return password;}
-
+    public Connection getConnect() {return connect;}
      // =========================== SETTERS ===========================
     // Setters are not included to maintain immutability of connection parameters after initialization.
     /*
@@ -123,6 +125,36 @@ public class JDBCInterpreter {
         } catch (SQLException e) {
             throw new RuntimeException("Error closing connection: " + e.getMessage(), e);
         }
+    }
+
+    public ResultSetData getTableData(String tableName, String query) {
+        validateTableName(tableName);
+
+        List<String> columnNames = new ArrayList<>();
+        List<List<String>> rows = new ArrayList<>();
+
+        try (Statement stmt = connect.createStatement()) {
+            ResultSet rs = stmt.executeQuery(query);
+            ResultSetMetaData metaData = rs.getMetaData();
+            int columnCount = metaData.getColumnCount();
+
+            for (int col = 1; col <= columnCount; col++) {
+                columnNames.add(metaData.getColumnName(col));
+            }
+
+            while (rs.next()) {
+                List<String> row = new ArrayList<>();
+                for (int col = 1; col <= columnCount; col++) {
+                    row.add(rs.getString(col) != null ? rs.getString(col) : "");
+                }
+                rows.add(row);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error fetching table: " + e.getMessage(), e);
+        }
+
+        return new ResultSetData(columnNames, rows);
     }
 
 }
