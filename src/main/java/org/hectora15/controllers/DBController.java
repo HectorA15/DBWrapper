@@ -13,14 +13,10 @@ public class DBController {
     @FXML private Button previousButton;
     @FXML private StackPane stackCreate;
 
-    // tablePane vive en UI.fxml (center del BorderPane) — se pasa a SelectViewController
+
     @FXML private Pane tablePane;
 
-    /*
-     * Convención JavaFX fx:include:
-     *   <fx:include fx:id="createView"  source="CreateView.fxml"/>
-     *   → inyecta el controller en el campo "createViewController"  (fx:id + "Controller")
-     */
+
     @FXML private SelectViewController selectViewController;
     @FXML private InsertViewController insertViewController;
     @FXML private CreateViewController createViewController;
@@ -36,7 +32,11 @@ public class DBController {
         showView(0);
     }
 
-    /** Llamado por DBMain tras una conexión exitosa. */
+    /**
+     * Called by DBMain when a connection is established and a JDBCInterpreter is ready.
+     * Passes the interpreter to each sub-controller so they can initialize their views and perform database operations.
+     * @param interpreter
+     */
     public void onConnectionReady(JDBCInterpreter interpreter) {
         // SelectViewController necesita tablePane además del intérprete
         if (selectViewController != null)
@@ -49,16 +49,27 @@ public class DBController {
             deleteViewController.onConnectionReady(interpreter);
     }
 
+    /**
+     * Shows the next view in the stack (CREATE → INSERT → SELECT → DELETE → CREATE ...).
+     */
     private void showNextView() {
         currentViewIndex = (currentViewIndex + 1) % stackCreate.getChildren().size();
         showView(currentViewIndex);
     }
 
+    /**
+     * Shows the previous view in the stack (CREATE → DELETE → SELECT → INSERT → CREATE ...).
+     */
     private void showPreviousView() {
         currentViewIndex = (currentViewIndex - 1 + stackCreate.getChildren().size()) % stackCreate.getChildren().size();
         showView(currentViewIndex);
     }
 
+    /**
+     * Hides all views in the stack and shows only the one at the specified index.
+     * Also updates the label to indicate which view is active.
+     * @param index
+     */
     private void showView(int index) {
         for (int i = 0; i < stackCreate.getChildren().size(); i++)
             stackCreate.getChildren().get(i).setVisible(i == index);

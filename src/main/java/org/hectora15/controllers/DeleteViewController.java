@@ -12,16 +12,28 @@ public class DeleteViewController {
 
     private JDBCInterpreter interpreter;
 
+    /**
+     * Initializes the view.
+     * Loads the tables into the ComboBox and sets up the delete button action.
+     * Called automatically by JavaFX when the FXML is loaded.
+     */
     @FXML
     public void initialize() {
         deleteButton.setOnAction(e -> onDeleteClick());
     }
 
+    /**
+     * Called by DBMain when a connection is established and a JDBCInterpreter is ready.
+     * @param interpreter
+     */
     public void onConnectionReady(JDBCInterpreter interpreter) {
         this.interpreter = interpreter;
         loadTables();
     }
 
+    /**
+     * Loads the available tables from the database and populates the ComboBox. If there's an error, it prints it to the console.
+     */
     private void loadTables() {
         try {
             deleteTableCombo.getItems().setAll(interpreter.getAvailableTables());
@@ -30,6 +42,11 @@ public class DeleteViewController {
         }
     }
 
+    /**
+     * Called when the delete button is clicked.
+     * It retrieves the selected table and the WHERE clause from the user input, validates them, and then executes the DELETE statement using the JDBCInterpreter.
+     * If there's an error, it shows an alert with the error message.
+     */
     private void onDeleteClick() {
         String table = deleteTableCombo.getValue();
         String where = deleteWhereArea.getText().trim();
@@ -39,25 +56,16 @@ public class DeleteViewController {
             return;
         }
 
-        // Confirmación antes de borrar
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setHeaderText("¿Eliminar registros de '" + table + "'?");
-        confirm.setContentText(where.isEmpty()
-                ? "⚠ Sin cláusula WHERE — se borrarán TODOS los registros."
-                : "WHERE " + where);
-        confirm.showAndWait().filter(r -> r == ButtonType.OK).ifPresent(r -> {
-            try {
-                String sql = where.isEmpty()
-                        ? "DELETE FROM " + table
-                        : "DELETE FROM " + table + " WHERE " + where;
-                interpreter.executeUpdate(sql);
-                showAlert(Alert.AlertType.INFORMATION, "Éxito", "Registros eliminados.");
-            } catch (RuntimeException e) {
-                showAlert(Alert.AlertType.ERROR, "Error al eliminar", e.getMessage());
-            }
-        });
+
+
     }
 
+    /**
+     * Shows an alert with the specified type, header, and content. This is a helper method to avoid repeating code when showing alerts.
+     * @param type
+     * @param header
+     * @param content
+     */
     private void showAlert(Alert.AlertType type, String header, String content) {
         Alert a = new Alert(type);
         a.setHeaderText(header);

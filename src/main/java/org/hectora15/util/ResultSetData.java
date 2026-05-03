@@ -2,16 +2,26 @@ package org.hectora15.util;
 
 import java.util.List;
 
+/**
+ *  Data structure to hold the results of a SQL query in a way that can be easily used by the UI.
+ *  It contains the column names and the rows of data as lists of strings.
+ */
 public class ResultSetData {
 
     public List<String> columnNames;
     public List<List<String>> rows;
     public List<String>columnTypes;
 
+    /**
+     * Constructor. Creates a new ResultSetData object with the specified column names, rows, and column types.
+     * @param columnNames
+     * @param rows
+     * @param columnTypes
+     */
     public ResultSetData(List<String> columnNames, List<List<String>> rows, List<String> columnTypes) {
         this.columnNames = columnNames;
         this.rows = rows;
-        this.columnTypes= columnTypes;
+        this.columnTypes = columnTypes;
     }
 
     public int getRowCount() {

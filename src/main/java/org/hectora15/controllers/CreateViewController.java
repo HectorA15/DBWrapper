@@ -19,9 +19,17 @@ public class CreateViewController {
         createButton.setOnAction(e -> onCreateClick());
     }
 
+    /**
+     * Called by DBMain when a connection is established and a JDBCInterpreter is ready.
+     * @param interpreter
+     */
     public void onConnectionReady(JDBCInterpreter interpreter) {
         this.interpreter = interpreter;
     }
+
+    /**
+     *
+     */
 
     private void onCreateClick() {
         String tableName = createTableField.getText().trim();
