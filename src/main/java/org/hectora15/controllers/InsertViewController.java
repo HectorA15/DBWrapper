@@ -1,43 +1,85 @@
 package org.hectora15.controllers;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
+import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import org.hectora15.util.JDBCInterpreter;
+import org.hectora15.util.ResultSetData;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class InsertViewController {
 
-    private VBox insertView;
-
     @FXML private ComboBox<String> insertTableCombo;
+    @FXML private VBox insertFieldsVbox; // un TextField por columna, generado dinámicamente
     @FXML private Button insertButton;
 
-    // TODO: por cada columna que tenga la tabla seleccionada deben aparecer dos campos por cada columna en el GRIDPANE
+    private JDBCInterpreter interpreter;
+    private List<String> currentColumns = new ArrayList<>();
 
-    public InsertViewController(VBox insertView) {
-        this.insertView = insertView;
-    }
-
+    @FXML
     public void initialize() {
-        System.out.println("InsertViewController initialized");
-
-        // TODO: Cargar tablas en insertTableCombo desde BD
-        // TODO: Al seleccionar tabla, generar TextFields para cada columna
-        // TODO: Conectar botón insertButton a JDBCInterpreter.insert()
-
-        setupListeners();
+        insertTableCombo.setOnAction(e -> onTableSelected());
+        insertButton.setOnAction(e -> onInsertClick());
     }
 
-    private void setupListeners() {
-        // TODO: insertTableCombo.setOnAction(e -> onTableSelected());
-        // TODO: insertButton.setOnAction(e -> onInsertClick());
+    public void onConnectionReady(JDBCInterpreter interpreter) {
+        this.interpreter = interpreter;
+        loadTables();
     }
 
-    // TODO: private void onTableSelected() { }
-    // TODO: private void onInsertClick() { }
+    private void loadTables() {
+        try {
+            insertTableCombo.getItems().setAll(interpreter.getAvailableTables());
+        } catch (RuntimeException e) {
+            System.err.println("InsertView: error loading tables: " + e.getMessage());
+        }
+    }
 
-    public void onConnectionReady() {
-        System.out.println("InsertViewController: Connection is ready, loading tables...");
+    private void onTableSelected() {
+        String table = insertTableCombo.getValue();
+        if (table == null) return;
 
+        try {
+            insertFieldsVbox.getChildren().clear();
+            currentColumns.clear();
+
+            ResultSetData data = interpreter.getTableData(table, "SELECT * FROM " + table + " WHERE 1=0");
+            for (int i = 0; i < data.getColumnCount(); i++) {
+                String col = data.getColumnName(i);
+                currentColumns.add(col);
+                insertFieldsVbox.getChildren().add(new Label(col));
+                insertFieldsVbox.getChildren().add(new TextField());
+            }
+        } catch (RuntimeException e) {
+            System.err.println("InsertView: error loading columns: " + e.getMessage());
+        }
+    }
+
+    private void onInsertClick() {
+        String table = insertTableCombo.getValue();
+        if (table == null || currentColumns.isEmpty()) return;
+
+        List<Object> values = new ArrayList<>();
+        // Los TextField están en posiciones impares del VBox (0=Label, 1=TextField, 2=Label…)
+        for (int i = 1; i < insertFieldsVbox.getChildren().size(); i += 2) {
+            values.add(((TextField) insertFieldsVbox.getChildren().get(i)).getText());
+        }
+
+        try {
+            interpreter.insert(table, String.join(",", currentColumns), values.toArray());
+            showAlert(Alert.AlertType.INFORMATION, "Éxito", "Fila insertada en '" + table + "'.");
+        } catch (RuntimeException e) {
+            showAlert(Alert.AlertType.ERROR, "Error al insertar", e.getMessage());
+        }
+    }
+
+    private void showAlert(Alert.AlertType type, String header, String content) {
+        Alert a = new Alert(type);
+        a.setHeaderText(header);
+        a.setContentText(content);
+        a.showAndWait();
     }
 }

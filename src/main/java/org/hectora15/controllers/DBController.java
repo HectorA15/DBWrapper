@@ -2,147 +2,66 @@ package org.hectora15.controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import org.hectora15.ui.DBMain;
 import org.hectora15.util.JDBCInterpreter;
-
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DBController {
 
-    // NAVIGATION
     @FXML private Label actualMethodLabel;
     @FXML private Button nextButton;
     @FXML private Button previousButton;
-
-    // GRID
-    @FXML private GridPane selectorGrid;
-
-
-    // STACK PANE
     @FXML private StackPane stackCreate;
 
-    // ============ CREATE VIEW ============
-    @FXML private VBox createView;
-    @FXML private VBox Create;
-    @FXML private TextField createTableField;
-    @FXML private TextField createQuantityField;
-    @FXML private Button createButton;
+    // tablePane vive en UI.fxml (center del BorderPane) — se pasa a SelectViewController
+    @FXML private Pane tablePane;
 
-    // ============ INSERT VIEW ============
-    @FXML private VBox insertView;
-    @FXML private ComboBox<String> insertTableCombo;
-    @FXML private Button insertButton;
+    /*
+     * Convención JavaFX fx:include:
+     *   <fx:include fx:id="createView"  source="CreateView.fxml"/>
+     *   → inyecta el controller en el campo "createViewController"  (fx:id + "Controller")
+     */
+    @FXML private SelectViewController selectViewController;
+    @FXML private InsertViewController insertViewController;
+    @FXML private CreateViewController createViewController;
+    @FXML private DeleteViewController deleteViewController;
 
-    // ============ SELECT VIEW ============
-    @FXML private VBox selectView;
-    @FXML private VBox selectVbox;
-    @FXML private TitledPane selectTableTitled;
-    @FXML private ScrollPane selectTableScroll;
-    @FXML private TitledPane selectColumnTitled;
-    @FXML private ScrollPane selectColumnScroll;
-    @FXML private ScrollPane selectWhereScroll;
-
-    // ============ DELETE VIEW ============
-    @FXML private VBox deleteView;
-    @FXML private ComboBox<String> deleteTableCombo;
-    @FXML private TextArea deleteWhereArea;
-    @FXML private Button deleteButton;
-
+    private final String[] viewNames = {"CREATE", "INSERT", "SELECT", "DELETE"};
     private int currentViewIndex = 0;
-    private VBox[] views;
-    private String[] viewNames = {"CREATE", "INSERT", "SELECT", "DELETE"};
-    private JDBCInterpreter interpreter;
-    private Connection connect;
-
-    // Controllers
-    private CreateViewController createController;
-    private InsertViewController insertController;
-    private SelectViewController selectController;
-    private DeleteViewController deleteController;
 
     @FXML
-    public void initialize(){
-        // all views in an array for easy navigation
-        views = new VBox[]{createView, insertView, selectView, deleteView};
-
-        //String url = getDatabase().getUrl();
-        //String user = getDatabase().getUsername();
-        // password = getDatabase().getPassword();
-
-        //interpreter = new JDBCInterpreter(url,user,password);
-        //connect = interpreter.getConnect();
-
-
-        // Controllers injection
-        injectControllers();
-
-        // listeners
+    public void initialize() {
         nextButton.setOnAction(e -> showNextView());
         previousButton.setOnAction(e -> showPreviousView());
-
-        // start with the first view
         showView(0);
     }
 
-    private void injectControllers() {
-        try {
-            createController = new CreateViewController(createView);
-            createController.initialize();
-
-            insertController = new InsertViewController(insertView);
-            insertController.initialize();
-
-            selectController = new SelectViewController(selectView);
-            selectController.initialize();
-
-            deleteController = new DeleteViewController(deleteView);
-            deleteController.initialize();
-
-            System.out.println("All controllers injected successfully");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    /** Llamado por DBMain tras una conexión exitosa. */
+    public void onConnectionReady(JDBCInterpreter interpreter) {
+        // SelectViewController necesita tablePane además del intérprete
+        if (selectViewController != null)
+            selectViewController.onConnectionReady(interpreter, tablePane);
+        if (insertViewController != null)
+            insertViewController.onConnectionReady(interpreter);
+        if (createViewController != null)
+            createViewController.onConnectionReady(interpreter);
+        if (deleteViewController != null)
+            deleteViewController.onConnectionReady(interpreter);
     }
-
-    public void onConnectionReady() {
-        System.out.println("DBController: Connection is ready, notifying child controllers...");
-
-        selectController.onConnectionReady();
-        insertController.onConnectionReady();
-        deleteController.onConnectionReady();
-        createController.onConnectionReady();
-    }
-
 
     private void showNextView() {
-        currentViewIndex = (currentViewIndex + 1) % views.length;
+        currentViewIndex = (currentViewIndex + 1) % stackCreate.getChildren().size();
         showView(currentViewIndex);
     }
 
     private void showPreviousView() {
-        currentViewIndex = (currentViewIndex - 1 + views.length) % views.length;
+        currentViewIndex = (currentViewIndex - 1 + stackCreate.getChildren().size()) % stackCreate.getChildren().size();
         showView(currentViewIndex);
     }
 
     private void showView(int index) {
-        for (VBox view : views) {
-            view.setVisible(false);
-        }
-
-        views[index].setVisible(true);
+        for (int i = 0; i < stackCreate.getChildren().size(); i++)
+            stackCreate.getChildren().get(i).setVisible(i == index);
         actualMethodLabel.setText(viewNames[index]);
-
-        System.out.println("Swapping to: " + viewNames[index]);
     }
-
-    private JDBCInterpreter getDatabase() {
-        return DBMain.jdbcInterpreter;
-    }
-
-
 }

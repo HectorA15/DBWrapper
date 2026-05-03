@@ -1,45 +1,67 @@
 package org.hectora15.controllers;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextArea;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.*;
+import org.hectora15.util.JDBCInterpreter;
 
 public class DeleteViewController {
 
-    private VBox deleteView;
-
     @FXML private ComboBox<String> deleteTableCombo;
-    @FXML private TextArea deleteWhereArea;
+    @FXML private TextArea deleteWhereArea; // ej: "id = 5"
     @FXML private Button deleteButton;
 
-    public DeleteViewController(VBox deleteView) {
-        this.deleteView = deleteView;
-    }
+    private JDBCInterpreter interpreter;
 
+    @FXML
     public void initialize() {
-        System.out.println("DeleteViewController initialized");
-
-        // TODO: Cargar tablas disponibles en deleteTableCombo
-        // TODO: Agregar FilteredComboBox (buscar tablas escribiendo)
-        // TODO: Validar WHERE clause antes de ejecutar
-        // TODO: Conectar botón deleteButton a JDBCInterpreter.delete()
-
-        setupListeners();
+        deleteButton.setOnAction(e -> onDeleteClick());
     }
 
-    private void setupListeners() {
-        // TODO: deleteTableCombo.setOnAction(e -> onTableSelected());
-        // TODO: deleteButton.setOnAction(e -> onDeleteClick());
+    public void onConnectionReady(JDBCInterpreter interpreter) {
+        this.interpreter = interpreter;
+        loadTables();
     }
 
-    // TODO: private void onTableSelected() { }
-    // TODO: private void onDeleteClick() { }
-    // TODO: private boolean validateWhereClause(String where) { }
+    private void loadTables() {
+        try {
+            deleteTableCombo.getItems().setAll(interpreter.getAvailableTables());
+        } catch (RuntimeException e) {
+            System.err.println("DeleteView: error loading tables: " + e.getMessage());
+        }
+    }
 
-    public void onConnectionReady() {
-        System.out.println("InsertViewController: Connection is ready, loading tables...");
+    private void onDeleteClick() {
+        String table = deleteTableCombo.getValue();
+        String where = deleteWhereArea.getText().trim();
 
+        if (table == null) {
+            showAlert(Alert.AlertType.WARNING, "Sin tabla", "Selecciona una tabla.");
+            return;
+        }
+
+        // Confirmación antes de borrar
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setHeaderText("¿Eliminar registros de '" + table + "'?");
+        confirm.setContentText(where.isEmpty()
+                ? "⚠ Sin cláusula WHERE — se borrarán TODOS los registros."
+                : "WHERE " + where);
+        confirm.showAndWait().filter(r -> r == ButtonType.OK).ifPresent(r -> {
+            try {
+                String sql = where.isEmpty()
+                        ? "DELETE FROM " + table
+                        : "DELETE FROM " + table + " WHERE " + where;
+                interpreter.executeUpdate(sql);
+                showAlert(Alert.AlertType.INFORMATION, "Éxito", "Registros eliminados.");
+            } catch (RuntimeException e) {
+                showAlert(Alert.AlertType.ERROR, "Error al eliminar", e.getMessage());
+            }
+        });
+    }
+
+    private void showAlert(Alert.AlertType type, String header, String content) {
+        Alert a = new Alert(type);
+        a.setHeaderText(header);
+        a.setContentText(content);
+        a.showAndWait();
     }
 }

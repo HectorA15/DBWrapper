@@ -14,7 +14,7 @@ public class Main {
         interpreter.deleteTable("jugadores");
         interpreter.createTable("jugadores", "nombre_jugador VARCHAR(255), dorsal INT");
         interpreter.insert("jugadores", "nombre_jugador, dorsal", new Object[]{"Maradona", 10});
-        interpreter.printTable("jugadores");
+
 
         interpreter.closeConnection();
     }

@@ -17,13 +17,11 @@ import java.io.IOException;
 public class DBMain extends Application {
 
     private Stage primaryStage;
-    public static JDBCInterpreter jdbcInterpreter;
     private DBController dbController;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
-
         Application.setUserAgentStylesheet(new PrimerDark().getUserAgentStylesheet());
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/UI.fxml"));
@@ -32,9 +30,8 @@ public class DBMain extends Application {
 
         root.setDisable(true);
 
-        Scene scene = new Scene(root);
         primaryStage.setTitle("DB Wrapper");
-        primaryStage.setScene(scene);
+        primaryStage.setScene(new Scene(root));
         primaryStage.show();
 
         showLoginAndConnect(root);
@@ -44,41 +41,33 @@ public class DBMain extends Application {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/LoginDialog.fxml"));
             Parent loginRoot = loader.load();
-            LoginDialogController controller = loader.getController();
+            LoginDialogController loginCtrl = loader.getController();
 
             Stage dialogStage = new Stage();
             dialogStage.setTitle("Connect to Database");
             dialogStage.initModality(Modality.APPLICATION_MODAL);
             dialogStage.initOwner(primaryStage);
             dialogStage.setScene(new Scene(loginRoot));
-
-            controller.setDialogStage(dialogStage);
+            loginCtrl.setDialogStage(dialogStage);
             dialogStage.showAndWait();
 
-            if (controller.isConnectClicked()) {
-                String url = controller.getUrl();
-                String user = controller.getUser();
-                String password = controller.getPassword();
-
-                System.out.println("Connecting to " + url);
-                System.out.println("Username: " + user);
-
-                try {
-                    jdbcInterpreter = new JDBCInterpreter(url, user, password);
-                    System.out.println("Connection successful");
-
-                    root.setDisable(false);
-
-                    // ← Notificar que la conexión está lista
-                    dbController.onConnectionReady();
-
-                } catch (RuntimeException e) {
-                    showError("Connection Error: " + e.getMessage());
-                    showLoginAndConnect(root);
-                }
-            } else {
-                System.out.println("Login cancelled by user");
+            if (!loginCtrl.isConnectClicked()) {
                 System.exit(0);
+                return;
+            }
+
+            try {
+                JDBCInterpreter interpreter = new JDBCInterpreter(
+                        loginCtrl.getUrl(),
+                        loginCtrl.getUser(),
+                        loginCtrl.getPassword()
+                );
+                root.setDisable(false);
+                dbController.onConnectionReady(interpreter); // <-- pasa el intérprete aquí
+
+            } catch (RuntimeException e) {
+                showError("Connection Error: " + e.getMessage());
+                showLoginAndConnect(root); // reintenta el login
             }
 
         } catch (IOException e) {

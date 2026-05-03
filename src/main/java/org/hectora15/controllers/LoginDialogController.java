@@ -44,9 +44,6 @@ public class LoginDialogController {
 
     private void handleConnect() {
         connectClicked = true;
-
-
-
         dialogStage.close();
     }
 
