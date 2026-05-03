@@ -28,18 +28,28 @@ public class SelectViewController {
     private final Map<String, TitledPane> columnPaneMap = new HashMap<>();
     private final Map<String, VBox> columnVboxMap = new HashMap<>();
 
+    /**
+     * Called when the FXML is loaded. Initializes the view and prints a message to the console for debugging purposes.
+     */
     @FXML
     public void initialize() {
         System.out.println("SelectViewController initialized");
     }
 
+    /**
+     * Called by DBMain when a connection is established and a JDBCInterpreter is ready.
+     * @param interpreter
+     * @param tablePane
+     */
     public void onConnectionReady(JDBCInterpreter interpreter, Pane tablePane) {
         this.interpreter = interpreter;
         this.tablePane   = tablePane;
         loadAvailableTables();
     }
 
-
+    /**
+     * loads the available tables from the database and creates a checkbox for each.
+     */
     private void loadAvailableTables() {
         try {
             selectTableVbox.getChildren().clear();
@@ -56,7 +66,10 @@ public class SelectViewController {
         }
     }
 
-
+    /**
+     * Called when a table checkbox is checked. It creates a TitledPane with a ScrollPane containing checkboxes for each column of the table.
+     * @param tableName
+     */
     private void onTableChecked(String tableName) {
         VBox columnsVbox = new VBox(4);
         columnsVbox.setPadding(new Insets(6, 8, 6, 8));
@@ -67,7 +80,6 @@ public class SelectViewController {
 
             for (int i = 0; i < meta.getColumnCount(); i++) {
                 CheckBox colCb = new CheckBox(meta.getColumnName(i));
-                // Al cambiar cualquier columna → reconstruir la query y refrescar
                 colCb.selectedProperty().addListener((obs, old, selected) ->
                         refreshTableData(tableName));
                 columnsVbox.getChildren().add(colCb);
@@ -87,10 +99,14 @@ public class SelectViewController {
         columnPaneMap.put(tableName, pane);
         selectColumnVBox.getChildren().add(pane);
 
-        // Primera carga: SELECT * (ninguna columna marcada aún)
+
         refreshTableData(tableName);
     }
 
+    /**
+     * Called when a table checkbox is unchecked. It removes the corresponding TitledPane and clears the table data if no tables are selected.
+     * @param tableName
+     */
     private void onTableUnchecked(String tableName) {
         TitledPane pane = columnPaneMap.remove(tableName);
         if (pane != null) selectColumnVBox.getChildren().remove(pane);
@@ -100,6 +116,10 @@ public class SelectViewController {
             tablePane.getChildren().clear();
     }
 
+    /**
+     * Refreshes the table data based on the selected columns for the given table. If no columns are selected, it defaults to "SELECT *".
+     * @param tableName
+     */
     private void refreshTableData(String tableName) {
         VBox vbox = columnVboxMap.get(tableName);
         if (vbox == null) return;
@@ -116,6 +136,11 @@ public class SelectViewController {
         loadTableData(tableName, query);
     }
 
+    /**
+     * Loads the table data based on the selected columns and displays it in the tablePane. If no columns are selected, it defaults to "SELECT *".
+     * @param tableName
+     * @param query
+     */
     private void loadTableData(String tableName, String query) {
         if (tablePane == null) return;
         try {
@@ -127,7 +152,10 @@ public class SelectViewController {
         }
     }
 
-
+    /**
+     * Draws the table data in a GridPane inside a ScrollPane. The first row contains the column headers, and the subsequent rows contain the data values.
+     * @param data
+     */
     private void drawTable(ResultSetData data) {
         if (data == null || data.getColumnCount() == 0) return;
 
