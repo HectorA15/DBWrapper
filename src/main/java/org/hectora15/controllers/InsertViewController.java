@@ -2,7 +2,6 @@ package org.hectora15.controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import org.hectora15.util.JDBCInterpreter;
 import org.hectora15.util.ResultSetData;
@@ -47,11 +46,17 @@ public class InsertViewController {
             currentColumns.clear();
 
             ResultSetData data = interpreter.getTableData(table, "SELECT * FROM " + table + " WHERE 1=0");
+
             for (int i = 0; i < data.getColumnCount(); i++) {
                 String col = data.getColumnName(i);
+               String colDate= data.getColumnTypes(i);
+               TextField type= new TextField();
+                type.setPromptText(colDate);
+
                 currentColumns.add(col);
                 insertFieldsVbox.getChildren().add(new Label(col));
-                insertFieldsVbox.getChildren().add(new TextField());
+                insertFieldsVbox.getChildren().add(type);
+
             }
         } catch (RuntimeException e) {
             System.err.println("InsertView: error loading columns: " + e.getMessage());

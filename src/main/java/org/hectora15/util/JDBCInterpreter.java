@@ -103,6 +103,7 @@ public class JDBCInterpreter {
     public ResultSetData getTableData(String tableName, String query) {
         validateTableName(tableName);
         List<String> columnNames = new ArrayList<>();
+        List<String> columnTypes= new ArrayList<>();
         List<List<String>> rows = new ArrayList<>();
 
         try (Statement stmt = connect.createStatement();
@@ -112,6 +113,7 @@ public class JDBCInterpreter {
             int cols = meta.getColumnCount();
             for (int i = 1; i <= cols; i++) {
                 columnNames.add(meta.getColumnName(i));
+              columnTypes.add( meta.getColumnTypeName(i));
             }
             while (rs.next()) {
                 List<String> row = new ArrayList<>();
@@ -124,7 +126,7 @@ public class JDBCInterpreter {
         } catch (SQLException e) {
             throw new RuntimeException("Error fetching table data: " + e.getMessage(), e);
         }
-        return new ResultSetData(columnNames, rows);
+        return new ResultSetData(columnNames, rows, columnTypes);
     }
 
     // =========================== UTILS ===========================

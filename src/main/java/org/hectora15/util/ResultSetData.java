@@ -6,10 +6,12 @@ public class ResultSetData {
 
     public List<String> columnNames;
     public List<List<String>> rows;
+    public List<String>columnTypes;
 
-    public ResultSetData(List<String> columnNames, List<List<String>> rows) {
+    public ResultSetData(List<String> columnNames, List<List<String>> rows, List<String> columnTypes) {
         this.columnNames = columnNames;
         this.rows = rows;
+        this.columnTypes= columnTypes;
     }
 
     public int getRowCount() {
@@ -24,7 +26,14 @@ public class ResultSetData {
         return columnNames.get(index);
     }
 
+    public String getColumnTypes(int index) {
+        return columnTypes.get(index);
+    }
+
+
     public String getValue(int row, int col) {
         return rows.get(row).get(col);
     }
+
+
 }
