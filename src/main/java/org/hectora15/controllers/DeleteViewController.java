@@ -37,4 +37,9 @@ public class DeleteViewController {
     // TODO: private void onTableSelected() { }
     // TODO: private void onDeleteClick() { }
     // TODO: private boolean validateWhereClause(String where) { }
+
+    public void onConnectionReady() {
+        System.out.println("InsertViewController: Connection is ready, loading tables...");
+
+    }
 }

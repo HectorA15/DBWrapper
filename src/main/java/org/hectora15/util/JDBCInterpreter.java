@@ -127,6 +127,23 @@ public class JDBCInterpreter {
         }
     }
 
+
+    public List<String> getAvailableTables() {
+        List<String> tableNames = new ArrayList<>();
+
+        try (ResultSet rs = connect.getMetaData().getTables(null, null, "%", new String[] {"TABLE"})) {
+            while (rs.next()) {
+                tableNames.add(rs.getString("TABLE_NAME"));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error fetching table names: " + e.getMessage(), e);
+        }
+
+        return tableNames;
+    }
+
+
+
     public ResultSetData getTableData(String tableName, String query) {
         validateTableName(tableName);
 
@@ -135,6 +152,8 @@ public class JDBCInterpreter {
 
         try (Statement stmt = connect.createStatement()) {
             ResultSet rs = stmt.executeQuery(query);
+
+
             ResultSetMetaData metaData = rs.getMetaData();
             int columnCount = metaData.getColumnCount();
 

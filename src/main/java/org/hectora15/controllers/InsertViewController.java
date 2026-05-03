@@ -35,4 +35,9 @@ public class InsertViewController {
 
     // TODO: private void onTableSelected() { }
     // TODO: private void onInsertClick() { }
+
+    public void onConnectionReady() {
+        System.out.println("InsertViewController: Connection is ready, loading tables...");
+
+    }
 }

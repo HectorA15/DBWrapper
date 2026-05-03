@@ -22,6 +22,7 @@ public class DBController {
     // GRID
     @FXML private GridPane selectorGrid;
 
+
     // STACK PANE
     @FXML private StackPane stackCreate;
 
@@ -55,8 +56,8 @@ public class DBController {
     private int currentViewIndex = 0;
     private VBox[] views;
     private String[] viewNames = {"CREATE", "INSERT", "SELECT", "DELETE"};
-    JDBCInterpreter interpreter;
-    Connection connect;
+    private JDBCInterpreter interpreter;
+    private Connection connect;
 
     // Controllers
     private CreateViewController createController;
@@ -69,12 +70,12 @@ public class DBController {
         // all views in an array for easy navigation
         views = new VBox[]{createView, insertView, selectView, deleteView};
 
-        String url = getDatabase().getUrl();
-        String user = getDatabase().getUsername();
-        String password = getDatabase().getPassword();
+        //String url = getDatabase().getUrl();
+        //String user = getDatabase().getUsername();
+        // password = getDatabase().getPassword();
 
-        interpreter = new JDBCInterpreter(url,user,password);
-        connect = interpreter.getConnect();
+        //interpreter = new JDBCInterpreter(url,user,password);
+        //connect = interpreter.getConnect();
 
 
         // Controllers injection
@@ -108,6 +109,16 @@ public class DBController {
         }
     }
 
+    public void onConnectionReady() {
+        System.out.println("DBController: Connection is ready, notifying child controllers...");
+
+        selectController.onConnectionReady();
+        insertController.onConnectionReady();
+        deleteController.onConnectionReady();
+        createController.onConnectionReady();
+    }
+
+
     private void showNextView() {
         currentViewIndex = (currentViewIndex + 1) % views.length;
         showView(currentViewIndex);
@@ -132,5 +143,6 @@ public class DBController {
     private JDBCInterpreter getDatabase() {
         return DBMain.jdbcInterpreter;
     }
+
 
 }
