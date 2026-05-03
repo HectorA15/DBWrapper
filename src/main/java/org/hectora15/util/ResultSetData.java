@@ -12,6 +12,7 @@ public class ResultSetData {
         this.columnNames = columnNames;
         this.rows = rows;
     }
+
 public ResultSetData(List<String> columnTypes){
 this.columnTypes=columnTypes;
 }

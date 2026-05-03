@@ -19,24 +19,41 @@ public class DBMain extends Application {
     private Stage primaryStage;
     private DBController dbController;
 
+    /**
+     * Called when the application starts.
+     * Loads the main UI and shows the login dialog to connect to the database.
+     * @param primaryStage
+     * @throws Exception
+     */
     @Override
     public void start(Stage primaryStage) throws Exception {
+
         this.primaryStage = primaryStage;
+
+        // Apply a theme
         Application.setUserAgentStylesheet(new PrimerDark().getUserAgentStylesheet());
 
+        // Load the main UI from the FXML file
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/UI.fxml"));
         Parent root = loader.load();
-        dbController = loader.getController();
+        dbController = loader.getController(); // Get the controller instance
 
-        root.setDisable(true);
+        root.setDisable(true); // Disable the UI until a connection is established
 
         primaryStage.setTitle("DB Wrapper");
-        primaryStage.setScene(new Scene(root));
+        primaryStage.setScene(new Scene(root)); // Set the scene with the loaded UI
         primaryStage.show();
 
+        // Show the login dialog to connect to the database
         showLoginAndConnect(root);
     }
 
+
+    /**
+     * Shows the login dialog to connect to the database.
+     * If the connection is successful, it enables the main UI and passes the JDBCInterpreter to the DBController.
+     * @param root
+     */
     private void showLoginAndConnect(Parent root) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/LoginDialog.fxml"));
@@ -63,11 +80,11 @@ public class DBMain extends Application {
                         loginCtrl.getPassword()
                 );
                 root.setDisable(false);
-                dbController.onConnectionReady(interpreter); // <-- pasa el intérprete aquí
+                dbController.onConnectionReady(interpreter);
 
             } catch (RuntimeException e) {
                 showError("Connection Error: " + e.getMessage());
-                showLoginAndConnect(root); // reintenta el login
+                showLoginAndConnect(root);
             }
 
         } catch (IOException e) {
@@ -75,6 +92,10 @@ public class DBMain extends Application {
         }
     }
 
+    /**
+     * Shows an error alert with the given message.
+     * @param message
+     */
     private void showError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error in Connection");
@@ -83,7 +104,4 @@ public class DBMain extends Application {
         alert.showAndWait();
     }
 
-    public static void main(String[] args) {
-        launch(args);
-    }
 }
