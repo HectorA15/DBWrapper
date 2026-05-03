@@ -46,16 +46,17 @@ public class InsertViewController {
             currentColumns.clear();
 
             ResultSetData data = interpreter.getTableData(table, "SELECT * FROM " + table + " WHERE 1=0");
+            ResultSetData type= interpreter.getTableType(table);
 
             for (int i = 0; i < data.getColumnCount(); i++) {
                 String col = data.getColumnName(i);
-               String colDate= data.getColumnTypes(i);
-               TextField type= new TextField();
-                type.setPromptText(colDate);
+               String colDate= type.getColumnTypes(i);
+               TextField typeText = new TextField();
+                typeText.setPromptText(colDate);
 
                 currentColumns.add(col);
                 insertFieldsVbox.getChildren().add(new Label(col));
-                insertFieldsVbox.getChildren().add(type);
+                insertFieldsVbox.getChildren().add(typeText);
 
             }
         } catch (RuntimeException e) {

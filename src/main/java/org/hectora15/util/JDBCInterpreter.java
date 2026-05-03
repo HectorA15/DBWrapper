@@ -103,7 +103,7 @@ public class JDBCInterpreter {
     public ResultSetData getTableData(String tableName, String query) {
         validateTableName(tableName);
         List<String> columnNames = new ArrayList<>();
-        List<String> columnTypes= new ArrayList<>();
+
         List<List<String>> rows = new ArrayList<>();
 
         try (Statement stmt = connect.createStatement();
@@ -113,7 +113,6 @@ public class JDBCInterpreter {
             int cols = meta.getColumnCount();
             for (int i = 1; i <= cols; i++) {
                 columnNames.add(meta.getColumnName(i));
-              columnTypes.add( meta.getColumnTypeName(i));
             }
             while (rs.next()) {
                 List<String> row = new ArrayList<>();
@@ -126,7 +125,22 @@ public class JDBCInterpreter {
         } catch (SQLException e) {
             throw new RuntimeException("Error fetching table data: " + e.getMessage(), e);
         }
-        return new ResultSetData(columnNames, rows, columnTypes);
+        return new ResultSetData(columnNames, rows);
+    }
+    public ResultSetData getTableType(String tableName){
+        List<String> columnTypes= new ArrayList<>();
+        String sql = "SELECT * FROM " + tableName + " WHERE 1=0";
+        try (Statement stmt = connect.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            ResultSetMetaData meta = rs.getMetaData();
+            int cols = meta.getColumnCount();
+            for (int i = 1; i <= cols; i++) {
+                columnTypes.add(meta.getColumnTypeName(i));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error fetching table data: " + e.getMessage(), e);
+        }
+        return new ResultSetData(columnTypes);
     }
 
     // =========================== UTILS ===========================

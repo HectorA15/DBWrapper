@@ -8,11 +8,13 @@ public class ResultSetData {
     public List<List<String>> rows;
     public List<String>columnTypes;
 
-    public ResultSetData(List<String> columnNames, List<List<String>> rows, List<String> columnTypes) {
+    public ResultSetData(List<String> columnNames, List<List<String>> rows) {
         this.columnNames = columnNames;
         this.rows = rows;
-        this.columnTypes= columnTypes;
     }
+public ResultSetData(List<String> columnTypes){
+this.columnTypes=columnTypes;
+}
 
     public int getRowCount() {
         return rows.size();
