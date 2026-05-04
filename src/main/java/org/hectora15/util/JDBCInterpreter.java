@@ -144,6 +144,7 @@ public class JDBCInterpreter {
     public ResultSetData getTableData(String tableName, String query) {
         validateTableName(tableName);
         List<String> columnNames = new ArrayList<>();
+
         List<List<String>> rows = new ArrayList<>();
 
         try (Statement stmt = connect.createStatement();
@@ -166,6 +167,21 @@ public class JDBCInterpreter {
             throw new RuntimeException("Error fetching table data: " + e.getMessage(), e);
         }
         return new ResultSetData(columnNames, rows);
+    }
+    public ResultSetData getTableType(String tableName){
+        List<String> columnTypes= new ArrayList<>();
+        String sql = "SELECT * FROM " + tableName + " WHERE 1=0";
+        try (Statement stmt = connect.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            ResultSetMetaData meta = rs.getMetaData();
+            int cols = meta.getColumnCount();
+            for (int i = 1; i <= cols; i++) {
+                columnTypes.add(meta.getColumnTypeName(i));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error fetching table data: " + e.getMessage(), e);
+        }
+        return new ResultSetData(columnTypes);
     }
 
     // =========================== UTILS ===========================

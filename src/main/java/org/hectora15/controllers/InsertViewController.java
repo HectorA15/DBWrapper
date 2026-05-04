@@ -2,7 +2,6 @@ package org.hectora15.controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import org.hectora15.util.JDBCInterpreter;
 import org.hectora15.util.ResultSetData;
@@ -47,11 +46,18 @@ public class InsertViewController {
             currentColumns.clear();
 
             ResultSetData data = interpreter.getTableData(table, "SELECT * FROM " + table + " WHERE 1=0");
+            ResultSetData type= interpreter.getTableType(table);
+
             for (int i = 0; i < data.getColumnCount(); i++) {
                 String col = data.getColumnName(i);
+               String colDate= type.getColumnTypes(i);
+               TextField typeText = new TextField();
+                typeText.setPromptText(colDate);
+
                 currentColumns.add(col);
                 insertFieldsVbox.getChildren().add(new Label(col));
-                insertFieldsVbox.getChildren().add(new TextField());
+                insertFieldsVbox.getChildren().add(typeText);
+
             }
         } catch (RuntimeException e) {
             System.err.println("InsertView: error loading columns: " + e.getMessage());
@@ -70,11 +76,28 @@ public class InsertViewController {
 
         try {
             interpreter.insert(table, String.join(",", currentColumns), values.toArray());
-            showAlert(Alert.AlertType.INFORMATION, "Éxito", "Fila insertada en '" + table + "'.");
+            showAlert(Alert.AlertType.INFORMATION, "Exito", "Fila insertada en '" + table + "'.");
         } catch (RuntimeException e) {
             showAlert(Alert.AlertType.ERROR, "Error al insertar", e.getMessage());
         }
+        refreshData();
     }
+    public void refreshData() {
+        if (insertTableCombo != null) {
+            insertTableCombo.getSelectionModel().clearSelection();
+            insertTableCombo.setValue(null);
+        }
+        if (insertFieldsVbox != null) {
+            insertFieldsVbox.getChildren().clear();
+        }
+        if (currentColumns != null) {
+            currentColumns.clear();
+        }
+        if (this.interpreter != null) {
+            loadTables();
+        }
+    }
+
 
     private void showAlert(Alert.AlertType type, String header, String content) {
         Alert a = new Alert(type);

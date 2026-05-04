@@ -9,7 +9,7 @@ public class DeleteViewController {
     @FXML private ComboBox<String> deleteTableCombo;
     @FXML private TextArea deleteWhereArea; // ej: "id = 5"
     @FXML private Button deleteButton;
-
+@FXML private Button deleteElementButton;
     private JDBCInterpreter interpreter;
 
     /**
@@ -20,6 +20,7 @@ public class DeleteViewController {
     @FXML
     public void initialize() {
         deleteButton.setOnAction(e -> onDeleteClick());
+        deleteElementButton.setOnAction(e -> onDelectElementSelected());
     }
 
     /**
@@ -49,13 +50,64 @@ public class DeleteViewController {
      */
     private void onDeleteClick() {
         String table = deleteTableCombo.getValue();
-        String where = deleteWhereArea.getText().trim();
 
         if (table == null) {
             showAlert(Alert.AlertType.WARNING, "Sin tabla", "Selecciona una tabla.");
             return;
         }
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("¡ADVERTENCIA!");
+        confirm.setHeaderText("¿Seguro de eliminar la tabla '" + table + "'?");
+        if (confirm.showAndWait().get() == ButtonType.OK) {
+            try {
+                interpreter.deleteTable(table);
+                showAlert(Alert.AlertType.INFORMATION, "Tabla Eliminada", "La tabla '" + table + "' ha sido borrada");
+                deleteTableCombo.setValue(null);
+                loadTables();
+            } catch (RuntimeException e) {
+                showAlert(Alert.AlertType.ERROR, "Error de SQL", e.getMessage());
+            }
+        }
 
+    }
+    private void onDelectElementSelected(){
+        String table = deleteTableCombo.getValue();
+        String where = deleteWhereArea.getText().trim();
+
+        if (table == null || where.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Faltan datos", "Selecciona tabla");
+            return;
+        }
+
+        if (confirmAction("Confirmar", "¿Borrar registros de " + table + " donde " + where + "?")) {
+            try {
+                String sql = "DELETE FROM " + table + " WHERE " + where;
+                interpreter.executeUpdate(sql);
+                showAlert(Alert.AlertType.INFORMATION, "Exito", "Registros eliminados.");
+            } catch (RuntimeException e) {
+                showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
+            }
+        }
+    
+    }
+
+    private boolean confirmAction(String header, String content) {
+        Alert a = new Alert(Alert.AlertType.CONFIRMATION);
+        a.setHeaderText(header);
+        a.setContentText(content);
+        return a.showAndWait().filter(b -> b == ButtonType.OK).isPresent();
+    }
+    public void refreshData() {
+        if (deleteWhereArea != null) {
+            deleteWhereArea.clear();
+        }
+        if (deleteTableCombo != null) {
+            deleteTableCombo.getSelectionModel().clearSelection();
+            deleteTableCombo.setValue(null);
+        }
+        if (this.interpreter != null) {
+            loadTables();
+        }
     }
 
     /**
