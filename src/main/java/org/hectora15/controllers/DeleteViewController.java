@@ -34,7 +34,7 @@ public class DeleteViewController {
     /**
      * Loads the available tables from the database and populates the ComboBox. If there's an error, it prints it to the console.
      */
-    private void loadTables() {
+    public void loadTables() {
         try {
             deleteTableCombo.getItems().setAll(interpreter.getAvailableTables());
         } catch (RuntimeException e) {
@@ -55,8 +55,6 @@ public class DeleteViewController {
             showAlert(Alert.AlertType.WARNING, "Sin tabla", "Selecciona una tabla.");
             return;
         }
-
-
 
     }
 

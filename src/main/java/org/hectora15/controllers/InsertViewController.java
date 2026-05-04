@@ -30,7 +30,7 @@ public class InsertViewController {
         loadTables();
     }
 
-    private void loadTables() {
+    public void loadTables() {
         try {
             insertTableCombo.getItems().setAll(interpreter.getAvailableTables());
         } catch (RuntimeException e) {

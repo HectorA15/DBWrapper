@@ -6,61 +6,23 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="562.0" prefWidth="851.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.hectora15.controllers.DBController">
-    <right>
-        <VBox prefHeight="537.0" prefWidth="241.0" BorderPane.alignment="CENTER">
-            <children>
-                <GridPane fx:id="selectorGrid" alignment="CENTER">
-                    <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                    <children>
-                        <Label fx:id="actualMethodLabel" alignment="CENTER" text="SELECT" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
-                            <font>
-                                <Font name="System Bold" size="14.0" />
-                            </font>
-                        </Label>
-                        <Button fx:id="nextButton" alignment="CENTER" mnemonicParsing="false" text="&gt;" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-                        <Button fx:id="previousButton" alignment="CENTER" mnemonicParsing="false" prefHeight="13.0" prefWidth="25.0" text="&lt;" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-                    </children>
-                    <VBox.margin>
-                        <Insets top="10.0" />
-                    </VBox.margin>
-                </GridPane>
-                <Separator prefWidth="200.0">
-                    <VBox.margin>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                    </VBox.margin>
-                </Separator>
-                <StackPane fx:id="stackCreate" prefHeight="484.0" prefWidth="244.0" VBox.vgrow="ALWAYS">
-                    <children>
-                        <fx:include fx:id="createView" source="CreateView.fxml"/>
-                        <fx:include fx:id="insertView" source="InsertView.fxml"/>
-                        <fx:include fx:id="selectView" source="SelectView.fxml"/>
-                        <fx:include fx:id="deleteView" source="DeleteView.fxml"/>
-                    </children>
-                </StackPane>
-            </children>
-            <padding>
-                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-            </padding>
-        </VBox>
-    </right>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            stylesheets="@style.css"
+            prefHeight="562.0" prefWidth="851.0"
+            xmlns="http://javafx.com/javafx/25"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.hectora15.controllers.DBController">
+
     <top>
         <MenuBar BorderPane.alignment="CENTER">
             <menus>
@@ -84,14 +46,65 @@
             </menus>
         </MenuBar>
     </top>
+
+    <!--
+        Centro: ScrollPane → VBox fx:id="tablePane"
+        VBox gestiona el layout vertical de múltiples tablas simultáneas.
+        ScrollPane permite navegación cuando hay muchas filas.
+    -->
     <center>
-        <Pane fx:id="tablePane" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+        <ScrollPane fitToWidth="true" BorderPane.alignment="CENTER">
+            <content>
+                <VBox fx:id="tablePane" spacing="16.0">
+                    <padding><Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /></padding>
+                </VBox>
+            </content>
             <BorderPane.margin>
                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
             </BorderPane.margin>
-            <padding>
-                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-            </padding>
-        </Pane>
+        </ScrollPane>
     </center>
+
+    <right>
+        <VBox prefHeight="537.0" prefWidth="241.0" BorderPane.alignment="CENTER">
+            <children>
+                <GridPane fx:id="selectorGrid" alignment="CENTER">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                    <children>
+                        <Button fx:id="previousButton" mnemonicParsing="false" prefHeight="13.0" prefWidth="25.0" text="&lt;"
+                                GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                        <Label fx:id="actualMethodLabel" alignment="CENTER" text="SELECT"
+                               GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                            <font><Font name="System Bold" size="14.0" /></font>
+                        </Label>
+                        <Button fx:id="nextButton" mnemonicParsing="false" text="&gt;"
+                                GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                    </children>
+                    <VBox.margin><Insets top="10.0" /></VBox.margin>
+                </GridPane>
+
+                <Separator prefWidth="200.0">
+                    <VBox.margin><Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /></VBox.margin>
+                </Separator>
+
+                <StackPane fx:id="stackCreate" alignment="TOP_CENTER" prefHeight="484.0" prefWidth="244.0" VBox.vgrow="ALWAYS">
+                    <children>
+                        <fx:include fx:id="createView" source="CreateView.fxml" />
+                        <fx:include fx:id="insertView" source="InsertView.fxml" />
+                        <fx:include fx:id="selectView" source="SelectView.fxml" />
+                        <fx:include fx:id="deleteView" source="DeleteView.fxml" />
+                    </children>
+                </StackPane>
+            </children>
+            <padding><Insets bottom="5.0" left="5.0" right="5.0" top="5.0" /></padding>
+        </VBox>
+    </right>
+
 </BorderPane>
