@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import org.hectora15.util.JDBCInterpreter;
 
 public class DBController {
@@ -18,8 +19,7 @@ public class DBController {
     private StackPane stackCreate;
 
 
-    @FXML
-    private Pane tablePane;
+    @FXML private VBox tablePane;
 
 
     @FXML
@@ -53,10 +53,20 @@ public class DBController {
             selectViewController.onConnectionReady(interpreter, tablePane);
         if (insertViewController != null)
             insertViewController.onConnectionReady(interpreter);
-        if (createViewController != null)
+        if (createViewController != null) {
             createViewController.onConnectionReady(interpreter);
+            createViewController.setOnTableCreatedCallback(() -> refreshAllViews());
+        }
+
         if (deleteViewController != null)
             deleteViewController.onConnectionReady(interpreter);
+    }
+
+    private void refreshAllViews() {
+        if (selectViewController != null) selectViewController.loadAvailableTables();
+        if (insertViewController != null) insertViewController.loadTables();
+        if (deleteViewController != null) deleteViewController.loadTables();
+        System.out.println("Todas las vistas han sido actualizadas con las nuevas tablas.");
     }
 
     /**

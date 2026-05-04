@@ -7,22 +7,30 @@
 
 <VBox fx:id="selectView" prefHeight="200.0" prefWidth="100.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.hectora15.controllers.SelectViewController">
     <children>
-        <VBox fx:id="selectVbox" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
-            <children>
-                <TitledPane fx:id="selectTableTitled" prefHeight="200.0" prefWidth="200.0" text="Tables">
-                    <VBox.margin>
-                        <Insets />
-                    </VBox.margin>
-                    <content>
-                        <ScrollPane fx:id="selectTableScroll">
-                            <content>
-                                <VBox fx:id="selectTableVbox" />
-                            </content>
-                        </ScrollPane>
-                    </content>
-                </TitledPane>
+      <ScrollPane fitToHeight="true" fitToWidth="true">
+         <content>
+              <VBox fx:id="selectVbox" alignment="TOP_CENTER">
+                  <children>
+                      <TitledPane fx:id="selectTableTitled" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="200.0" prefWidth="200.0" text="Tables">
+                          <VBox.margin>
+                              <Insets />
+                          </VBox.margin>
+                          <content>
+                              <ScrollPane fx:id="selectTableScroll" fitToWidth="true">
+                                  <content>
+                                      <VBox fx:id="selectTableVbox" />
+                                  </content>
+                              </ScrollPane>
+                          </content>
+                      </TitledPane>
+                  </children>
+              </VBox>
+         </content>
+      </ScrollPane>
+      <ScrollPane fitToHeight="true" fitToWidth="true" VBox.vgrow="ALWAYS">
+         <content>
             <VBox fx:id="selectColumnVBox" prefHeight="200.0" prefWidth="100.0" />
-            </children>
-        </VBox>
+         </content>
+      </ScrollPane>
     </children>
 </VBox>

@@ -1,0 +1,63 @@
+/* ============================================================
+   DB Wrapper – Stylesheet
+   Uses AtlantaFX PrimerDark.
+   ============================================================ */
+
+
+.table-title {
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-padding: 6 10 4 10;
+    -fx-background-color: #1c2128;
+    -fx-text-fill: #e6edf3;
+}
+
+
+.table-widget {
+    -fx-border-color: #444c56;
+    -fx-border-width: 1;
+}
+
+
+.table-header-cell {
+    -fx-background-color: #2d333b;
+    -fx-border-color: #444c56;
+    -fx-border-width: 0 1 1 0;
+    -fx-padding: 5 12 5 12;
+    -fx-font-weight: bold;
+    -fx-text-fill: #e6edf3;
+    -fx-min-width: 80px;
+}
+
+
+.table-cell-even {
+    -fx-background-color: #22272e;
+    -fx-border-color: #373e47;
+    -fx-border-width: 0 1 1 0;
+    -fx-padding: 4 12 4 12;
+    -fx-text-fill: #adbac7;
+    -fx-min-width: 80px;
+}
+
+
+.table-cell-odd {
+    -fx-background-color: #1c2128;
+    -fx-border-color: #373e47;
+    -fx-border-width: 0 1 1 0;
+    -fx-padding: 4 12 4 12;
+    -fx-text-fill: #adbac7;
+    -fx-min-width: 80px;
+}
+
+
+.table-empty-label {
+    -fx-text-fill: #8b949e;
+    -fx-padding: 8 12 8 12;
+}
+
+
+.column-header-label {
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+    -fx-padding: 2 5 2 5;
+}

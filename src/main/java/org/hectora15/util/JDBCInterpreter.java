@@ -46,11 +46,11 @@ public class JDBCInterpreter {
      * The columns parameter should be a comma-separated list of column definitions, e.g. "id INT PRIMARY KEY, name VARCHAR(255)".
      * If the table already exists, it will not be recreated (due to IF NOT EXISTS).
      * @param tableName
-     * @param columns
+     * @param columnDefinition
      */
-    public void createTable(String tableName, String columns) {
+    public void createTable(String tableName, String columnDefinition) {
         validateTableName(tableName);
-        String sql = "CREATE TABLE IF NOT EXISTS " + tableName + " (" + columns + ")";
+        String sql = "CREATE TABLE IF NOT EXISTS " + tableName + " (" + columnDefinition + ")";
         try (Statement stmt = connect.createStatement()) {
             stmt.executeUpdate(sql);
         } catch (SQLException e) {
