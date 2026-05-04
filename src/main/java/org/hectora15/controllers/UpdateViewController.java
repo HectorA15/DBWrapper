@@ -1,36 +1,100 @@
 package org.hectora15.controllers;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import org.hectora15.util.JDBCInterpreter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UpdateViewController {
 
-    @FXML private ComboBox updateTableComboBox; // aqui van a salir todas las tablas existentes actuales
-    @FXML private GridPane updateWhereGrid; // TODO: aqui es la tabla donde van a ir aparecniendo los campos donde el usuario va a ir poniendo las condiciones del WHERE, se van a ir añadiendo filas cada vez que el usuario pulse el boton de añadir fila
-    @FXML private GridPane updateColumnGrid; // TODO: aqui es la tabla donde van a ir aparecniendo los campos donde el usuario va a ir poniendo las columnas a actualizar, se van a ir añadiendo filas cada vez que el usuario pulse el boton de añadir fila
-    @FXML private Button addAttributeRow; // TODO: aqui es el boton que el usuario va a pulsar para añadir una nueva fila a la tabla de columnas a actualizar y agregar los campos anteriores
-    @FXML private Button addWhereRow; // TODO: aqui es el boton que el usuario va a pulsar para añadir una nueva fila a la tabla de condiciones del WHERE y agregar los campos anteriores
+    @FXML private ComboBox<String> updateTableComboBox;
+    @FXML private GridPane updateWhereGrid;
+    @FXML private GridPane updateColumnGrid;
+    @FXML private Button addAttributeRow;
+    @FXML private Button addWhereRow;
     @FXML private Button updateButton;
-    JDBCInterpreter interpreter;
+    @FXML private Button deleteAttributeRow;
+    @FXML private Button deleteWhereRow;
+
+
+
+    private JDBCInterpreter interpreter;
+
+    private List<ComboBox<String>> setCols = new ArrayList<>();
+    private List<TextField> setVals = new ArrayList<>();
+    private List<ComboBox<String>> whereCols = new ArrayList<>();
+    private List<TextField> whereVals = new ArrayList<>();
 
     @FXML
     public void initialize() {
+        addAttributeRow.setOnAction(e -> addRow(updateColumnGrid, setCols, setVals, " -> "));
 
+        addWhereRow.setOnAction(e -> addRow(updateWhereGrid, whereCols, whereVals, " = "));
+
+        updateButton.setOnAction(e -> onClickUpdate());
+    }
+
+    private void addRow(GridPane grid, List<ComboBox<String>> colList, List<TextField> valList, String symbol) {
+        int row = grid.getRowCount();
+
+        ComboBox<String> cb = new ComboBox<>();
+        cb.getItems().addAll("nombre", "dorsal", "id", "posicion");
+        cb.setPromptText("Columna");
+
+        TextField tf = new TextField();
+        tf.setPromptText("Valor");
+
+        colList.add(cb);
+        valList.add(tf);
+
+        grid.add(cb, 0, row);
+        grid.add(new Label(symbol), 1, row);
+        grid.add(tf, 2, row);
+    }
+
+    public void onClickUpdate() {
+        if (interpreter == null) return;
+
+        String table = updateTableComboBox.getValue();
+        StringBuilder setStr = new StringBuilder();
+        for (int i = 0; i < setCols.size(); i++) {
+            String c = setCols.get(i).getValue();
+            String v = setVals.get(i).getText();
+            if (c != null && !v.isEmpty()) {
+                if (setStr.length() > 0) setStr.append(", ");
+                setStr.append(c).append(" = '").append(v).append("'");
+            }
+        }
+
+        StringBuilder whereStr = new StringBuilder();
+        for (int i = 0; i < whereCols.size(); i++) {
+            String c = whereCols.get(i).getValue();
+            String v = whereVals.get(i).getText();
+            if (c != null && !v.isEmpty()) {
+                if (whereStr.length() > 0) whereStr.append(" AND ");
+                whereStr.append(c).append(" = '").append(v).append("'");
+            }
+        }
+
+        try {
+            interpreter.update(table, setStr.toString(), whereStr.toString(), new Object[0]);
+
+            Alert a = new Alert(Alert.AlertType.INFORMATION, "¡MySQL actualizó los datos con éxito!");
+            a.show();
+        } catch (Exception e) {
+            new Alert(Alert.AlertType.ERROR, "Error: " + e.getMessage()).show();
+        }
     }
 
 
-    public void onClickUpdate(){
-        updateButton.setOnAction(e -> {
-            //TODO: hacer lo que se tiene que hacer para actualizar la tabla, hay que recoger los datos de las tablas de columnas a actualizar y de condiciones del WHERE, y luego hacer la consulta UPDATE con el JDBCInterpreter
-        });
-    }
 
-    // NO MOVER OCUPAS ESTE METODO PARA CONSEGUIR EL INTERPRETE, SI LO BORRAS NO TE PUEDES COMUNICAR CON LA BASE DE DATOS NI REALIZAR OPERACIONES
     public void onConnectionReady(JDBCInterpreter interpreter) {
         this.interpreter = interpreter;
+        updateTableComboBox.getItems().clear();
+        updateTableComboBox.getItems().addAll(interpreter.getAvailableTables());
+        addRow(updateColumnGrid, setCols, setVals, " -> ");
+        addRow(updateWhereGrid, whereCols, whereVals, " = ");
     }
-
 }

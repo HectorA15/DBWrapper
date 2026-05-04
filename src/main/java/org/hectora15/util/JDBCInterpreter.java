@@ -120,9 +120,15 @@ public class JDBCInterpreter {
      */
     public void update(String tableName, String columns, String where, Object[] values) {
         validateTableName(tableName);
-        String placeholders = "?,".repeat(values.length);
-        placeholders = placeholders.substring(0, placeholders.length() - 1);
         String sql = "UPDATE " + tableName + " SET " + columns + " WHERE " + where;
+
+        try (PreparedStatement pstmt = connect.prepareStatement(sql)) {
+
+            pstmt.executeUpdate();
+            System.out.println("Consulta ejecutada: " + sql);
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al actualizar: " + e.getMessage(), e);
+        }
     }
 
     // =========================== QUERIES ===========================

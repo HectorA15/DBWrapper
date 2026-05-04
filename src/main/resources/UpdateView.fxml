@@ -6,7 +6,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -43,19 +42,15 @@
                     <rowConstraints>
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
-                     <children>
-                        <Label alignment="CENTER" text="-&gt;" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-                        <TextField GridPane.columnIndex="2" />
-                        <ComboBox prefWidth="150.0" />
-                     </children>
                   </GridPane>
                   <HBox alignment="CENTER">
                      <children>
-                        <Button fx:id="addAttributeRow" mnemonicParsing="false" prefHeight="25.0" prefWidth="69.0" text="+" HBox.hgrow="ALWAYS">
+                        <Button fx:id="addAttributeRow" mnemonicParsing="false" prefHeight="25.0" prefWidth="70.0" text="+" HBox.hgrow="ALWAYS">
                            <HBox.margin>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </HBox.margin>
                         </Button>
+                        <Button fx:id="deleteAttributeRow" mnemonicParsing="false" prefHeight="25.0" prefWidth="70.0" text="-" />
                      </children>
                   </HBox>
                </children>
@@ -77,19 +72,15 @@
                     <rowConstraints>
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
-                     <children>
-                        <Label alignment="CENTER" text="=" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-                        <TextField GridPane.columnIndex="2" />
-                        <ComboBox prefWidth="150.0" />
-                     </children>
                   </GridPane>
                   <HBox alignment="CENTER">
                      <children>
-                        <Button fx:id="addWhereRow" mnemonicParsing="false" prefHeight="25.0" prefWidth="69.0" text="+" HBox.hgrow="ALWAYS">
+                        <Button fx:id="addWhereRow" mnemonicParsing="false" prefHeight="25.0" prefWidth="70.0" text="+" HBox.hgrow="ALWAYS">
                            <HBox.margin>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </HBox.margin>
                         </Button>
+                        <Button fx:id="deleteWhereRow" mnemonicParsing="false" prefHeight="25.0" prefWidth="70.0" text="-" />
                      </children>
                   </HBox>
                </children>
