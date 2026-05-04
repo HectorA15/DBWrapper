@@ -216,7 +216,7 @@ public class SelectViewController {
         }
 
         if (data.getRowCount() == 0) {
-            Label empty = new Label("  (sin filas)");
+            Label empty = new Label("  (empty)");
             empty.getStyleClass().add("table-empty-label");
             grid.add(empty, 0, 1);
         }
