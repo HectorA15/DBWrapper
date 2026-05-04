@@ -16,12 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-            stylesheets="@style.css"
-            prefHeight="562.0" prefWidth="851.0"
-            xmlns="http://javafx.com/javafx/25"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="org.hectora15.controllers.DBController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="562.0" prefWidth="851.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.hectora15.controllers.DBController">
 
     <top>
         <MenuBar BorderPane.alignment="CENTER">
@@ -66,7 +61,7 @@
     </center>
 
     <right>
-        <VBox prefHeight="537.0" prefWidth="241.0" BorderPane.alignment="CENTER">
+        <VBox prefHeight="537.0" prefWidth="335.0" BorderPane.alignment="CENTER">
             <children>
                 <GridPane fx:id="selectorGrid" alignment="CENTER">
                     <columnConstraints>
@@ -78,14 +73,11 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                     <children>
-                        <Button fx:id="previousButton" mnemonicParsing="false" prefHeight="13.0" prefWidth="25.0" text="&lt;"
-                                GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-                        <Label fx:id="actualMethodLabel" alignment="CENTER" text="SELECT"
-                               GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                        <Button fx:id="previousButton" mnemonicParsing="false" prefHeight="13.0" prefWidth="25.0" text="&lt;" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                        <Label fx:id="actualMethodLabel" alignment="CENTER" text="SELECT" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                             <font><Font name="System Bold" size="14.0" /></font>
                         </Label>
-                        <Button fx:id="nextButton" mnemonicParsing="false" text="&gt;"
-                                GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                        <Button fx:id="nextButton" mnemonicParsing="false" text="&gt;" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
                     </children>
                     <VBox.margin><Insets top="10.0" /></VBox.margin>
                 </GridPane>
@@ -100,6 +92,7 @@
                         <fx:include fx:id="insertView" source="InsertView.fxml" />
                         <fx:include fx:id="selectView" source="SelectView.fxml" />
                         <fx:include fx:id="deleteView" source="DeleteView.fxml" />
+                        <fx:include fx:id="updateView" source="UpdateView.fxml" />
                     </children>
                 </StackPane>
             </children>

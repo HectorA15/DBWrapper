@@ -9,9 +9,9 @@ public class DeleteViewController {
     @FXML private ComboBox<String> deleteTableCombo;
     @FXML private TextArea deleteWhereArea; // ej: "id = 5"
     @FXML private Button deleteButton;
-@FXML private Button deleteElementButton;
+    @FXML private Button deleteElementButton;
     private JDBCInterpreter interpreter;
-
+    private Runnable onTableCreatedCallback;
     /**
      * Initializes the view.
      * Loads the tables into the ComboBox and sets up the delete button action.
@@ -20,7 +20,7 @@ public class DeleteViewController {
     @FXML
     public void initialize() {
         deleteButton.setOnAction(e -> onDeleteClick());
-        deleteElementButton.setOnAction(e -> onDelectElementSelected());
+        deleteElementButton.setOnAction(e -> onDeleteElementSelected());
     }
 
     /**
@@ -56,21 +56,27 @@ public class DeleteViewController {
             return;
         }
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle("¡ADVERTENCIA!");
-        confirm.setHeaderText("¿Seguro de eliminar la tabla '" + table + "'?");
+        confirm.setTitle("¡WARNING!");
+        confirm.setHeaderText("Are you sure? '" + table + "'?");
         if (confirm.showAndWait().get() == ButtonType.OK) {
             try {
                 interpreter.deleteTable(table);
-                showAlert(Alert.AlertType.INFORMATION, "Tabla Eliminada", "La tabla '" + table + "' ha sido borrada");
+                showAlert(Alert.AlertType.INFORMATION, "Table erased", "Table '" + table + "' erased");
                 deleteTableCombo.setValue(null);
                 loadTables();
             } catch (RuntimeException e) {
-                showAlert(Alert.AlertType.ERROR, "Error de SQL", e.getMessage());
+                showAlert(Alert.AlertType.ERROR, "SQL error ", e.getMessage());
             }
         }
 
     }
-    private void onDelectElementSelected(){
+
+    /**
+     * Called when the delete element button is clicked.
+     * It retrieves the selected table and the WHERE clause from the user input, validates them, and then executes the DELETE statement using the JDBCInterpreter.
+     * If there's an error, it shows an alert with the error message.
+     */
+    private void onDeleteElementSelected(){
         String table = deleteTableCombo.getValue();
         String where = deleteWhereArea.getText().trim();
 
@@ -79,11 +85,11 @@ public class DeleteViewController {
             return;
         }
 
-        if (confirmAction("Confirmar", "¿Borrar registros de " + table + " donde " + where + "?")) {
+        if (confirmAction("Confirm", "Erase from " + table + " where " + where + "?")) {
             try {
                 String sql = "DELETE FROM " + table + " WHERE " + where;
                 interpreter.executeUpdate(sql);
-                showAlert(Alert.AlertType.INFORMATION, "Exito", "Registros eliminados.");
+                showAlert(Alert.AlertType.INFORMATION, "Successfull", "Data erased from " + table + " where " + where + "");
             } catch (RuntimeException e) {
                 showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
             }
@@ -91,12 +97,24 @@ public class DeleteViewController {
     
     }
 
+    /**
+     * Shows a confirmation dialog with the specified header and content, and returns true if the user clicks OK, or false otherwise.
+     * This is a helper method to avoid repeating code when asking for confirmation.
+     * @param header
+     * @param content
+     * @return
+     */
     private boolean confirmAction(String header, String content) {
         Alert a = new Alert(Alert.AlertType.CONFIRMATION);
         a.setHeaderText(header);
         a.setContentText(content);
         return a.showAndWait().filter(b -> b == ButtonType.OK).isPresent();
     }
+
+    /**
+     * Refreshes the data in the view by clearing the input fields and reloading the available tables.
+     * This is called after a delete operation to update the view with the current state of the database.
+     */
     public void refreshData() {
         if (deleteWhereArea != null) {
             deleteWhereArea.clear();
@@ -121,5 +139,14 @@ public class DeleteViewController {
         a.setHeaderText(header);
         a.setContentText(content);
         a.showAndWait();
+    }
+
+    /**
+     * Sets the callback to be called when a new table is created.
+     * This allows the view to refresh the list of tables after a new one is added.
+     * @param callback
+     */
+    public void setOnTableCreatedCallback(Runnable callback) {
+        this.onTableCreatedCallback = callback;
     }
 }

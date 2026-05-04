@@ -11,9 +11,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="insertView" visible="false" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.hectora15.controllers.InsertViewController">
+<VBox fx:id="insertView" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.hectora15.controllers.InsertViewController">
     <children>
-        <VBox prefHeight="33.0" prefWidth="231.0" VBox.vgrow="ALWAYS">
+        <VBox prefHeight="33.0" prefWidth="231.0">
             <children>
                 <GridPane>
                     <columnConstraints>
@@ -47,7 +47,7 @@
                 <Insets bottom="10.0" top="10.0" />
             </VBox.margin>
         </VBox>
-        <VBox prefHeight="486.0" prefWidth="231.0">
+        <VBox prefHeight="486.0" prefWidth="231.0" VBox.vgrow="ALWAYS">
             <children>
                 <Label text="Values">
                     <font>

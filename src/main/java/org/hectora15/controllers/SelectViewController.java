@@ -70,7 +70,6 @@ public class SelectViewController {
                     else            onTableUnchecked(table);
                 });
 
-                // Si estaba marcada → reconstruir su estado (el listener no disparó aún)
                 if (cb.isSelected()) onTableChecked(table);
 
                 selectTableVbox.getChildren().add(cb);

@@ -22,6 +22,7 @@ public class DBController {
     @FXML private VBox tablePane;
 
 
+
     @FXML
     private SelectViewController selectViewController;
     @FXML
@@ -30,8 +31,10 @@ public class DBController {
     private CreateViewController createViewController;
     @FXML
     private DeleteViewController deleteViewController;
+    @FXML
+    private UpdateViewController updateViewController;
 
-    private final String[] viewNames = {"CREATE", "INSERT", "SELECT", "DELETE"};
+    private final String[] viewNames = {"CREATE", "INSERT", "SELECT", "DELETE", "UPDATE"};
     private int currentViewIndex = 0;
 
     @FXML
@@ -57,16 +60,19 @@ public class DBController {
             createViewController.onConnectionReady(interpreter);
             createViewController.setOnTableCreatedCallback(() -> refreshAllViews());
         }
-
+        if (updateViewController != null) {
+            updateViewController.onConnectionReady(interpreter);
+        }
         if (deleteViewController != null)
             deleteViewController.onConnectionReady(interpreter);
+            deleteViewController.setOnTableCreatedCallback(() -> refreshAllViews());
     }
 
     private void refreshAllViews() {
         if (selectViewController != null) selectViewController.loadAvailableTables();
         if (insertViewController != null) insertViewController.loadTables();
         if (deleteViewController != null) deleteViewController.loadTables();
-        System.out.println("Todas las vistas han sido actualizadas con las nuevas tablas.");
+
     }
 
     /**
@@ -75,6 +81,7 @@ public class DBController {
     private void showNextView() {
         currentViewIndex = (currentViewIndex + 1) % stackCreate.getChildren().size();
         showView(currentViewIndex);
+        refreshAllViews();
     }
 
     /**
@@ -83,6 +90,7 @@ public class DBController {
     private void showPreviousView() {
         currentViewIndex = (currentViewIndex - 1 + stackCreate.getChildren().size()) % stackCreate.getChildren().size();
         showView(currentViewIndex);
+        refreshAllViews();
     }
 
     /**

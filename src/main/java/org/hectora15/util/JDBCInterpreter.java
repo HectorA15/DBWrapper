@@ -99,12 +99,30 @@ public class JDBCInterpreter {
      * Executes the given SQL update command (e.g. UPDATE, DELETE). It does not return any result. If the command fails, it will throw an error.
      * @param sql
      */
+
     public void executeUpdate(String sql) {
         try (Statement stmt = connect.createStatement()) {
             stmt.executeUpdate(sql);
         } catch (SQLException e) {
             throw new RuntimeException("Error executing update: " + e.getMessage(), e);
         }
+    }
+
+    /**
+     * Updates the specified table by setting the columns to the given values where the condition is met.
+     * The columns parameter should be a comma-separated list of column assignments, e.g. "name = ?, age = ?".
+     * The where parameter should be a condition string, e.g. "id = 1".
+     * The values parameter should be an array of objects corresponding to the columns, e.g. new Object[]{"Alice", 30}.
+     * @param tableName
+     * @param columns
+     * @param where
+     * @param values
+     */
+    public void update(String tableName, String columns, String where, Object[] values) {
+        validateTableName(tableName);
+        String placeholders = "?,".repeat(values.length);
+        placeholders = placeholders.substring(0, placeholders.length() - 1);
+        String sql = "UPDATE " + tableName + " SET " + columns + " WHERE " + where;
     }
 
     // =========================== QUERIES ===========================
@@ -168,6 +186,13 @@ public class JDBCInterpreter {
         }
         return new ResultSetData(columnNames, rows);
     }
+
+    /**
+     * Returns the types of the columns of the specified table as a ResultSetData object, which contains the column types.
+     * If the table does not exist, it will throw an error. It executes a query that returns no rows but allows us to get the metadata of the columns.
+     * @param tableName
+     * @return
+     */
     public ResultSetData getTableType(String tableName){
         List<String> columnTypes= new ArrayList<>();
         String sql = "SELECT * FROM " + tableName + " WHERE 1=0";

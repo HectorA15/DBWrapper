@@ -12,7 +12,7 @@ import java.util.*;
 
 public class CreateViewController {
 
-    private final List<String> DataTypes = Arrays.asList("INT", "VARCHAR", "TEXT", "FLOAT", "DOUBLE", "BOOLEAN");
+    private final List<String> DataTypes = Arrays.asList("INT", "VARCHAR(50)", "TEXT", "FLOAT", "DOUBLE", "BOOLEAN");
     @FXML
     private TextField createTableField;
     @FXML
