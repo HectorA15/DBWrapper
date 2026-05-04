@@ -76,11 +76,28 @@ public class InsertViewController {
 
         try {
             interpreter.insert(table, String.join(",", currentColumns), values.toArray());
-            showAlert(Alert.AlertType.INFORMATION, "Éxito", "Fila insertada en '" + table + "'.");
+            showAlert(Alert.AlertType.INFORMATION, "Exito", "Fila insertada en '" + table + "'.");
         } catch (RuntimeException e) {
             showAlert(Alert.AlertType.ERROR, "Error al insertar", e.getMessage());
         }
+        refreshData();
     }
+    public void refreshData() {
+        if (insertTableCombo != null) {
+            insertTableCombo.getSelectionModel().clearSelection();
+            insertTableCombo.setValue(null);
+        }
+        if (insertFieldsVbox != null) {
+            insertFieldsVbox.getChildren().clear();
+        }
+        if (currentColumns != null) {
+            currentColumns.clear();
+        }
+        if (this.interpreter != null) {
+            loadTables();
+        }
+    }
+
 
     private void showAlert(Alert.AlertType type, String header, String content) {
         Alert a = new Alert(type);

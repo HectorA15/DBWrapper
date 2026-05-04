@@ -8,19 +8,28 @@ import org.hectora15.util.JDBCInterpreter;
 
 public class DBController {
 
-    @FXML private Label actualMethodLabel;
-    @FXML private Button nextButton;
-    @FXML private Button previousButton;
-    @FXML private StackPane stackCreate;
+    @FXML
+    private Label actualMethodLabel;
+    @FXML
+    private Button nextButton;
+    @FXML
+    private Button previousButton;
+    @FXML
+    private StackPane stackCreate;
 
 
-    @FXML private Pane tablePane;
+    @FXML
+    private Pane tablePane;
 
 
-    @FXML private SelectViewController selectViewController;
-    @FXML private InsertViewController insertViewController;
-    @FXML private CreateViewController createViewController;
-    @FXML private DeleteViewController deleteViewController;
+    @FXML
+    private SelectViewController selectViewController;
+    @FXML
+    private InsertViewController insertViewController;
+    @FXML
+    private CreateViewController createViewController;
+    @FXML
+    private DeleteViewController deleteViewController;
 
     private final String[] viewNames = {"CREATE", "INSERT", "SELECT", "DELETE"};
     private int currentViewIndex = 0;
@@ -35,6 +44,7 @@ public class DBController {
     /**
      * Called by DBMain when a connection is established and a JDBCInterpreter is ready.
      * Passes the interpreter to each sub-controller so they can initialize their views and perform database operations.
+     *
      * @param interpreter
      */
     public void onConnectionReady(JDBCInterpreter interpreter) {
@@ -68,11 +78,24 @@ public class DBController {
     /**
      * Hides all views in the stack and shows only the one at the specified index.
      * Also updates the label to indicate which view is active.
+     *
      * @param index
      */
     private void showView(int index) {
         for (int i = 0; i < stackCreate.getChildren().size(); i++)
             stackCreate.getChildren().get(i).setVisible(i == index);
         actualMethodLabel.setText(viewNames[index]);
+        switch (viewNames[index]) {
+            case "INSERT":
+                if (insertViewController != null) {
+                    insertViewController.refreshData();
+                }
+                break;
+            case "DELETE":
+                if (deleteViewController != null) {
+                    deleteViewController.refreshData();
+                }
+
+        }
     }
 }
