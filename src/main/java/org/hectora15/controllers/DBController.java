@@ -31,20 +31,14 @@ public class DBController {
     }
 
     public void onConnectionReady(JDBCInterpreter interpreter) {
-        if (selectViewController != null)
-            selectViewController.onConnectionReady(interpreter, tablePane);
-        if (insertViewController != null)
-            insertViewController.onConnectionReady(interpreter);
         if (createViewController != null) {
             createViewController.onConnectionReady(interpreter);
             createViewController.setOnTableCreatedCallback(this::refreshAllViews);
         }
-        if (deleteViewController != null) {
-            deleteViewController.onConnectionReady(interpreter);
-            deleteViewController.setOnTableCreatedCallback(this::refreshAllViews);
-        }
-        if (updateViewController != null)
-            updateViewController.onConnectionReady(interpreter);
+        if (selectViewController != null) selectViewController.onConnectionReady(interpreter, tablePane);
+        if (insertViewController != null) insertViewController.onConnectionReady(interpreter);
+        if (deleteViewController != null) deleteViewController.onConnectionReady(interpreter);
+        if (updateViewController != null) updateViewController.onConnectionReady(interpreter);
     }
 
     /**
@@ -105,7 +99,9 @@ public class DBController {
         actualMethodLabel.setText(viewNames[index]);
 
         switch (viewNames[index]) {
+            // case "CREATE" -> { if (createViewController  != null) createViewController.refreshData();}
             case "INSERT" -> { if (insertViewController  != null) insertViewController.refreshData(); }
+            // case "SELECT" -> { if (selectViewController  != null) selectViewController.refreshData(); }
             case "DELETE" -> { if (deleteViewController  != null) deleteViewController.refreshData(); }
             case "UPDATE" -> { if (updateViewController  != null) updateViewController.refreshData(); }
         }

@@ -11,7 +11,7 @@ public class DeleteViewController {
     @FXML private Button deleteButton;
     @FXML private Button deleteElementButton;
     private JDBCInterpreter interpreter;
-    private Runnable onTableCreatedCallback;
+
     /**
      * Initializes the view.
      * Loads the tables into the ComboBox and sets up the delete button action.
@@ -146,7 +146,5 @@ public class DeleteViewController {
      * This allows the view to refresh the list of tables after a new one is added.
      * @param callback
      */
-    public void setOnTableCreatedCallback(Runnable callback) {
-        this.onTableCreatedCallback = callback;
-    }
+
 }
