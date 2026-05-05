@@ -47,6 +47,24 @@ public class DBController {
             updateViewController.onConnectionReady(interpreter);
     }
 
+    /**
+     * Refreshes all views by triggering updates in each associated view controller.
+     *
+     * This method performs the following actions:
+     * - Calls {@code loadAvailableTables()} in the {@code selectViewController} to reload
+     *   and update the available tables view, ensuring the display reflects the current
+     *   state of the database.
+     * - Calls {@code loadTables()} in the {@code insertViewController} to refresh the list
+     *   of tables available for insertion operations.
+     * - Calls {@code loadTables()} in the {@code deleteViewController} to update the table
+     *   selection options for deletion functionality.
+     * - Invokes {@code refreshData()} in the {@code updateViewController} to reset and
+     *   reinitialize the update view with the latest available data, clearing previous inputs
+     *   and repopulating fields as necessary.
+     *
+     * Only views whose controllers are non-null will be refreshed. This ensures the method
+     * does not attempt to interact with uninitialized controllers.
+     */
     private void refreshAllViews() {
         if (selectViewController != null) selectViewController.loadAvailableTables();
         if (insertViewController  != null) insertViewController.loadTables();
@@ -54,19 +72,38 @@ public class DBController {
         if (updateViewController  != null) updateViewController.refreshData();
     }
 
+    /**
+     * Navigates through a set of views in a circular manner based on the provided direction.
+     * Updates the current view index, ensuring the index remains within valid bounds,
+     * and switches to the corresponding view.
+     *
+     * @param direction the step size indicating the navigation direction
+     *                  and number of views to move. A positive value moves
+     *                  forward, while a negative value moves backward.
+     */
     private void navigate(int direction) {
         int size = stackCreate.getChildren().size();
         currentViewIndex = (currentViewIndex + direction + size) % size;
         showView(currentViewIndex);
     }
 
+
+    /**
+     * Updates the visibility of child views within the stack pane and refreshes the associated
+     * view controller based on the specified view index. This method sets the specified view
+     * as visible while hiding all others, updates the display label with the current view's name,
+     * and resets the state of the view by invoking its refresh method.
+     *
+     * @param index the index of the view to display. It determines which view will be made
+     *              visible and triggers a refresh of the associated controller. The value
+     *              must correspond to a valid index in the {@code viewNames} array.
+     */
     private void showView(int index) {
         for (int i = 0; i < stackCreate.getChildren().size(); i++)
             stackCreate.getChildren().get(i).setVisible(i == index);
 
         actualMethodLabel.setText(viewNames[index]);
 
-        // Resetear la vista al entrar a ella
         switch (viewNames[index]) {
             case "INSERT" -> { if (insertViewController  != null) insertViewController.refreshData(); }
             case "DELETE" -> { if (deleteViewController  != null) deleteViewController.refreshData(); }
